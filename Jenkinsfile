@@ -1,51 +1,55 @@
 pipeline {
     agent any
-    
-    tools {
-        nodejs "NodeJS" // Ensure Node.js is configured in Jenkins
-        maven "Maven"    // Ensure Maven is configured in Jenkins
-    }
 
     stages {
         stage('Checkout') {
             steps {
-                // Step 1: Checkout code from the repository
+                // Checkout code from the repository
                 checkout scm
             }
         }
-        
-        stage('Install Dependencies') {
+
+        stage('Build Docker Image') {
             steps {
-                // Step 2: Install Node.js dependencies
-                sh 'npm install'
+                script {
+                    // Build the Docker image
+                    sh 'docker build -t my-web-app .'
+                }
             }
         }
-        
-        stage('Build with Maven') {
+
+        stage('Run Tests') {
             steps {
-                // Step 3: Build the application with Maven
-                // Make sure Maven is installed in Jenkins
-                sh 'mvn clean install'
+                script {
+                    // Optionally, you can run tests here
+                    // For example, using curl to check if the app is running
+                    sh '''
+                        docker run -d -p 3000:3000 --name test-app my-web-app
+                        sleep 5 # Wait for the app to start
+                        curl http://localhost:3000
+                        docker stop test-app
+                        docker rm test-app
+                    '''
+                }
             }
         }
-        
-        stage('Run Selenium Tests') {
+
+        stage('Cleanup') {
             steps {
-                // Step 4: Run Selenium tests
-                // Ensure Selenium is correctly set up (drivers, configurations)
-                sh 'mvn test -Dtest=YourSeleniumTestClass'  // Replace with your test class if needed
+                script {
+                    // Clean up Docker images if needed
+                    sh 'docker rmi my-web-app'
+                }
             }
         }
     }
-    
+
     post {
         success {
             echo 'Build and tests completed successfully!'
         }
         failure {
             echo 'Build or tests failed.'
-            // Additional notifications, e.g., Slack or email, can be added here
-            // mail to: 'your-email@example.com', subject: 'Build Failed', body: 'Please check the Jenkins job.'
         }
     }
 }
