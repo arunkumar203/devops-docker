@@ -1,10 +1,12 @@
 pipeline {
     agent any
     
-    environment {
-        NODE_HOME = tool name: 'NodeJS' // Ensure Node.js is configured in Jenkins
+    // environment {
+    //     NODE_HOME = tool name: 'NodeJS' // Ensure Node.js is configured in Jenkins
+    // }
+    tools {
+        nodejs "NodeJS" // This should match the name you set in Global Tool Configuration
     }
-    
     stages {
         stage('Checkout') {
             steps {
