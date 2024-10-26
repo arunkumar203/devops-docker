@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    sh 'sudo docker build -t node-app .'
+                    sh 'docker build -t node-app .'
                 }
             }
         }
