@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    sh 'docker build -t my-web-app .'
+                    sh 'sudo docker build -t node-app .'
                 }
             }
         }
@@ -24,7 +24,7 @@ pipeline {
                     // Optionally, you can run tests here
                     // For example, using curl to check if the app is running
                     sh '''
-                        docker run -d -p 3000:3000 --name test-app my-web-app
+                        docker run -d -p 3000:3000 --name test-app node-app
                         sleep 5 # Wait for the app to start
                         curl http://localhost:3000
                         docker stop test-app
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     // Clean up Docker images if needed
-                    sh 'docker rmi my-web-app'
+                    sh 'docker rmi node-app'
                 }
             }
         }
