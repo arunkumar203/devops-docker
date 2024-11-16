@@ -26,7 +26,7 @@ pipeline {
                     sh '''
                         docker run -d -p 3000:3000 --name test-app node-app
                         sleep 5 # Wait for the app to start
-                        curl http://localhost:3000
+                        curl http://localhost:5000
                         docker stop test-app
                         docker rm test-app
                     '''
